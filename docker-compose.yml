@@ -1,0 +1,109 @@
+version: '2'
+
+networks:
+  network:
+    driver: bridge
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - network
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: "eu-west-1"
+        awslogs-group: "laravel"
+        awslogs-create-group: "true"
+    env_file:
+        - docker-compose.env
+
+#  cron:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    logging:
+#      driver: awslogs
+#      options:
+#        awslogs-region: "eu-west-3"
+#        awslogs-group: "laravel-cron"
+#        awslogs-create-group: "true"
+#    command: ["/bin/sh", "-c", "env /bin/bash -o posix -c 'export -p' > /etc/cron.d/project_env.sh && chmod +x /etc/cron.d/project_env.sh && crontab /etc/cron.d/artisan-schedule-run && cron && tail -f /var/log/cron.log"]
+#    networks:
+#        - network
+#    env_file:
+#        - docker-compose.env
+
+#  worker:
+#    depends_on:
+#      - redis
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    logging:
+#      driver: awslogs
+#      options:
+#        awslogs-region: "us-east-1"
+#        awslogs-group: "laravel-worker"
+#        awslogs-create-group: "true"
+#    command: ["php", "artisan", "queue:work"]
+#    networks:
+#        - network
+#    env_file:
+#        - docker-compose.env
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - network
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: "eu-west-1"
+        awslogs-group: "nginx"
+        awslogs-create-group: "true"
+    links:
+        - app
+
+#  postgres:
+#    image: postgres:9.6
+#    logging:
+#      driver: awslogs
+#      options:
+#        awslogs-region: "us-east-1"
+#        awslogs-group: "postgresql"
+#        awslogs-create-group: "true"
+#    volumes:
+#      - dbdata:/var/lib/postgresql/data
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      - POSTGRES_DB
+#      - POSTGRES_USER
+#      - POSTGRES_PASSWORD
+#    env_file:
+#        - docker-compose.env
+#    networks:
+#      - network
+
+#  redis:
+#    image: redis
+#    logging:
+#      driver: awslogs
+#      options:
+#        awslogs-region: "eu-west-3"
+#        awslogs-group: "redis"
+#        awslogs-create-group: "true"
+#    networks:
+#      - network
+
+#volumes:
+#  dbdata:
+#    driver: local
