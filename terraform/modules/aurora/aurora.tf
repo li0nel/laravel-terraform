@@ -31,6 +31,10 @@ resource "random_string" "final_snapshot_id" {
 resource "aws_db_subnet_group" "aurora_subnet_group" {
   name       = "aurora_db_subnet_group_${var.stack_name}_${terraform.workspace}"
   subnet_ids = ["${var.subnet_ids}"]
+
+  tags {
+    Name = "${var.stack_name}"
+  }
 }
 
 resource "aws_security_group" "db_security_group" {
@@ -41,6 +45,10 @@ resource "aws_security_group" "db_security_group" {
     to_port     = 3306
     protocol    = "TCP"
     cidr_blocks = ["${data.aws_vpc.vpc.cidr_block}"]
+  }
+
+  tags {
+    Name = "${var.stack_name}"
   }
 }
 
@@ -59,6 +67,10 @@ resource "aws_rds_cluster" "aurora_cluster" {
   vpc_security_group_ids = [
     "${aws_security_group.db_security_group.id}",
   ]
+
+  tags {
+    Name = "${var.stack_name}"
+  }
 }
 
 resource "aws_rds_cluster_instance" "aurora_cluster_instance" {
@@ -69,4 +81,8 @@ resource "aws_rds_cluster_instance" "aurora_cluster_instance" {
   publicly_accessible  = false
   engine               = "aurora-mysql"
   engine_version       = "5.7.12"
+
+  tags {
+    Name = "${var.stack_name}"
+  }
 }

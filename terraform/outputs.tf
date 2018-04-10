@@ -31,6 +31,10 @@ output "ec2_ip" {
   value = "${module.ec2.ec2_ip}"
 }
 
+output "ssh_key_path" {
+  value = "${module.ec2.ssh_key_path}"
+}
+
 output "public_subnet_ids" {
   value = "${module.vpc.public_subnet_ids}"
 }

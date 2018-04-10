@@ -46,6 +46,10 @@ resource "aws_instance" "vm" {
   vpc_security_group_ids      = ["${aws_security_group.ec2_security_group.id}"]
   subnet_id                   = "${var.public_subnet_id}"
   iam_instance_profile        = "${aws_iam_instance_profile.vm_profile.name}"
+
+  tags {
+    Name = "${var.stack_name}"
+  }
 }
 
 resource "aws_security_group" "ec2_security_group" {
@@ -85,6 +89,10 @@ resource "aws_security_group" "ec2_security_group" {
     from_port   = 0
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name = "${var.stack_name}"
   }
 }
 
