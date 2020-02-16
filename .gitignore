@@ -2,3 +2,4 @@
 **/*.cert
 **/*.key
 key*
+docker-compose.env
